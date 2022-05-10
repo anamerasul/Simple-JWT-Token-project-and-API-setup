@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const verifyJwt = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers?.authorization;
 
   if (!authHeader) {
 
@@ -19,10 +19,20 @@ const verifyJwt = (req, res, next) => {
       
   }
 
-  const token=authHeader.split(" ")
+  const token=authHeader.split(" ")[1]
 
-  console.log(token)
-  console.log("inside verify jwt", authHeader);
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET,(err,decoded)=>{
+    if(err){
+        return res.status(403).send({message: 'forbidden'})
+    }
+    req.decoded= decoded;
+    next();
+  })
+    
+
+
+//   console.log(token)
+//   console.log("inside verify jwt", authHeader);
 };
 
 app.post("/login", async (req, res) => {
@@ -35,7 +45,7 @@ app.post("/login", async (req, res) => {
       { email: user.email },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "15s",
       }
     );
     res.send({ success: true, accessToken: accessToken });
@@ -46,10 +56,9 @@ app.post("/login", async (req, res) => {
 
 app.get("/orders", verifyJwt, (req, res) => {
   //   console.log(req.headers.authorization);
-  verifyJwt();
   res.send([
     { id: 1, item: "sunglass" },
-    { id: 2, item: "moonlass" },
+    { id: 2, item: "moonlass" }
   ]);
 });
 

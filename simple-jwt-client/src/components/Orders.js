@@ -31,8 +31,18 @@ const Orders = () => {
         authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
     })
-      .then((res) => res.json)
-      .then((data) => console.log(data));
+      .then((res) =>{
+
+        if(res.status===401 ||res.status===403){
+
+            navigate('/login')
+        }
+          console.log(res)
+return res.json()
+      })
+      
+    
+      .then((data) => setOrders(data));
   }, []);
 
   return (
