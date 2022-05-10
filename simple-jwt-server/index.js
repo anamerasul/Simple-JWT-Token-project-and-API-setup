@@ -10,6 +10,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const verifyJwt = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+
+    return res.status(401).send({message:'unauthorized'})
+      
+  }
+
+  const token=authHeader.split(" ")
+
+  console.log(token)
+  console.log("inside verify jwt", authHeader);
+};
+
 app.post("/login", async (req, res) => {
   const user = req.body;
   console.log(user);
@@ -27,6 +42,15 @@ app.post("/login", async (req, res) => {
   } else {
     res.send({ success: false });
   }
+});
+
+app.get("/orders", verifyJwt, (req, res) => {
+  //   console.log(req.headers.authorization);
+  verifyJwt();
+  res.send([
+    { id: 1, item: "sunglass" },
+    { id: 2, item: "moonlass" },
+  ]);
 });
 
 app.get("/", (req, res) => {
