@@ -1,5 +1,5 @@
 import React from "react";
-import {} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const inputStyle = {
   width: "100%",
@@ -8,6 +8,7 @@ const inputStyle = {
 };
 
 const Login = () => {
+  const navigate = useNavigate();
   const handleLogin = (event) => {
     event.preventDefault();
     const email = event.target.email.value;
@@ -24,7 +25,15 @@ const Login = () => {
       body: JSON.stringify({ email, password }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        if (data.success) {
+          console.log(data);
+          localStorage.setItem("accessToken", data.accessToken);
+          navigate("/orders");
+        } else {
+        }
+        console.log(data);
+      });
   };
 
   return (

@@ -15,10 +15,18 @@ app.post("/login", async (req, res) => {
   console.log(user);
   //DANGER: do not check paasword here
 
-  if (user.password === "123456") {
+  if (user.email === "user@gmail.com" && user.password === "123456") {
+    const accessToken = jwt.sign(
+      { email: user.email },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    );
+    res.send({ success: true, accessToken: accessToken });
   } else {
+    res.send({ success: false });
   }
-  res.send({ success: true });
 });
 
 app.get("/", (req, res) => {
